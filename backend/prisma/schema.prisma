@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  username        String           @unique
+  password        String
+  leetcodeUsername String?
+  githubUsername  String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  solvedQuestions SolvedQuestion[]
+  streaks         Streak[]
+  contestEntries  ContestEntry[]
+  sheetProgress   SheetProgress[]
+}
+
+model SolvedQuestion {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  difficulty  String   // Easy | Medium | Hard
+  topic       String
+  leetcodeId  Int?
+  url         String?
+  notes       String?
+  timeTaken   Int?     // minutes
+  solvedAt    DateTime @default(now())
+  createdAt   DateTime @default(now())
+}
+
+model Streak {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @default(now())
+  count     Int      @default(1)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, date])
+}
+
+model ContestEntry {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contestName  String
+  rank         Int?
+  rating       Float?
+  ratingChange Float?
+  date         DateTime
+  platform     String   @default("LeetCode")
+  createdAt    DateTime @default(now())
+}
+
+model DSASheet {
+  id          String          @id @default(cuid())
+  name        String
+  description String?
+  author      String?
+  totalCount  Int             @default(0)
+  questions   SheetQuestion[]
+  progress    SheetProgress[]
+  createdAt   DateTime        @default(now())
+}
+
+model SheetQuestion {
+  id           String          @id @default(cuid())
+  sheetId      String
+  sheet        DSASheet        @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  title        String
+  difficulty   String
+  topic        String
+  leetcodeLink String?
+  order        Int             @default(0)
+  progress     SheetProgress[]
+}
+
+model SheetProgress {
+  id         String        @id @default(cuid())
+  userId     String
+  user       User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sheetId    String
+  sheet      DSASheet      @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  questionId String
+  question   SheetQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  completed  Boolean       @default(false)
+  completedAt DateTime?
+  createdAt  DateTime      @default(now())
+
+  @@unique([userId, questionId])
+}
