@@ -24,8 +24,9 @@ export default function Login() {
       // Navigate to dashboard
       navigate('/dashboard', { replace: true });
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error || 'Login failed. Check your credentials.';
-      setError(msg);
+      const errObj = err as { response?: { data?: { error?: string } }; message?: string };
+      const msg = errObj?.response?.data?.error || errObj?.message || 'Login failed. Check your credentials.';
+      setError(String(msg));
     } finally {
       setLoading(false);
     }
