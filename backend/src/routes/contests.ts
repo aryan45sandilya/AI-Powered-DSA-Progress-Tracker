@@ -22,7 +22,12 @@ router.get('/', authenticate, async (req: AuthRequest, res: Response): Promise<v
 // POST /api/contests
 router.post('/', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { contestName, rank, rating, ratingChange, date, platform } = req.body;
+    const contestName = String(req.body.contestName || '');
+    const rank = req.body.rank ? parseInt(String(req.body.rank)) : undefined;
+    const rating = req.body.rating ? parseFloat(String(req.body.rating)) : undefined;
+    const ratingChange = req.body.ratingChange ? parseFloat(String(req.body.ratingChange)) : undefined;
+    const date = String(req.body.date || '');
+    const platform = String(req.body.platform || 'LeetCode');
 
     if (!contestName || !date) {
       res.status(400).json({ error: 'Contest name and date are required' });
@@ -33,11 +38,11 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response): Promise<
       data: {
         userId: req.userId!,
         contestName,
-        rank: rank ? parseInt(rank) : undefined,
-        rating: rating ? parseFloat(rating) : undefined,
-        ratingChange: ratingChange ? parseFloat(ratingChange) : undefined,
+        rank,
+        rating,
+        ratingChange,
         date: new Date(date),
-        platform: platform || 'LeetCode',
+        platform,
       },
     });
 
@@ -52,7 +57,12 @@ router.post('/', authenticate, async (req: AuthRequest, res: Response): Promise<
 router.put('/:id', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const { contestName, rank, rating, ratingChange, date, platform } = req.body;
+    const contestName = req.body.contestName ? String(req.body.contestName) : undefined;
+    const rank = req.body.rank ? parseInt(String(req.body.rank)) : undefined;
+    const rating = req.body.rating ? parseFloat(String(req.body.rating)) : undefined;
+    const ratingChange = req.body.ratingChange ? parseFloat(String(req.body.ratingChange)) : undefined;
+    const date = req.body.date ? new Date(String(req.body.date)) : undefined;
+    const platform = req.body.platform ? String(req.body.platform) : undefined;
 
     const existing = await prisma.contestEntry.findFirst({
       where: { id, userId: req.userId },
@@ -65,14 +75,7 @@ router.put('/:id', authenticate, async (req: AuthRequest, res: Response): Promis
 
     const updated = await prisma.contestEntry.update({
       where: { id },
-      data: {
-        contestName,
-        rank: rank ? parseInt(rank) : undefined,
-        rating: rating ? parseFloat(rating) : undefined,
-        ratingChange: ratingChange ? parseFloat(ratingChange) : undefined,
-        date: date ? new Date(date) : undefined,
-        platform,
-      },
+      data: { contestName, rank, rating, ratingChange, date, platform },
     });
 
     res.json(updated);

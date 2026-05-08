@@ -8,28 +8,32 @@ const prisma = new PrismaClient();
 // GET /api/tracker/questions
 router.get('/questions', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { topic, difficulty, search, page = '1', limit = '20' } = req.query;
+    const topic = req.query.topic as string | undefined;
+    const difficulty = req.query.difficulty as string | undefined;
+    const search = req.query.search as string | undefined;
+    const page = req.query.page as string || '1';
+    const limit = req.query.limit as string || '20';
 
     const where: Record<string, unknown> = { userId: req.userId };
     if (topic) where.topic = topic;
     if (difficulty) where.difficulty = difficulty;
     if (search) {
-      where.title = { contains: search as string, mode: 'insensitive' };
+      where.title = { contains: search, mode: 'insensitive' };
     }
 
-    const skip = (parseInt(page as string) - 1) * parseInt(limit as string);
+    const skip = (parseInt(page) - 1) * parseInt(limit);
 
     const [questions, total] = await Promise.all([
       prisma.solvedQuestion.findMany({
         where,
         orderBy: { solvedAt: 'desc' },
         skip,
-        take: parseInt(limit as string),
+        take: parseInt(limit),
       }),
       prisma.solvedQuestion.count({ where }),
     ]);
 
-    res.json({ questions, total, page: parseInt(page as string), limit: parseInt(limit as string) });
+    res.json({ questions, total, page: parseInt(page), limit: parseInt(limit) });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to fetch questions' });
