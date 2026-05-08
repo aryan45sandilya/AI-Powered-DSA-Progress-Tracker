@@ -1,7 +1,12 @@
 import axios from 'axios';
 
+// Backend API URL
+const BASE_URL = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_URL)
+  ? import.meta.env.VITE_API_URL
+  : 'https://ai-powered-dsa-progress-tracker.onrender.com/api';
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: BASE_URL,
   headers: { 'Content-Type': 'application/json' },
 });
 
