@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { authenticate, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -8,8 +8,9 @@ const prisma = new PrismaClient();
 // GET /api/contests
 router.get('/', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
+    const where: Prisma.ContestEntryWhereInput = { userId: req.userId };
     const contests = await prisma.contestEntry.findMany({
-      where: { userId: req.userId },
+      where,
       orderBy: { date: 'desc' },
     });
     res.json(contests);

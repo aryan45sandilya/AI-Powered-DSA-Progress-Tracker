@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Prisma } from '@prisma/client';
 import { authenticate, AuthRequest } from '../middleware/auth';
 
 const router = Router();
@@ -8,18 +8,16 @@ const prisma = new PrismaClient();
 // GET /api/tracker/questions
 router.get('/questions', authenticate, async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const topic = req.query.topic as string | undefined;
-    const difficulty = req.query.difficulty as string | undefined;
-    const search = req.query.search as string | undefined;
-    const page = req.query.page as string || '1';
-    const limit = req.query.limit as string || '20';
+    const topic = Array.isArray(req.query.topic) ? String(req.query.topic[0]) : req.query.topic ? String(req.query.topic) : undefined;
+    const difficulty = Array.isArray(req.query.difficulty) ? String(req.query.difficulty[0]) : req.query.difficulty ? String(req.query.difficulty) : undefined;
+    const search = Array.isArray(req.query.search) ? String(req.query.search[0]) : req.query.search ? String(req.query.search) : undefined;
+    const page = Array.isArray(req.query.page) ? String(req.query.page[0]) : req.query.page ? String(req.query.page) : '1';
+    const limit = Array.isArray(req.query.limit) ? String(req.query.limit[0]) : req.query.limit ? String(req.query.limit) : '20';
 
-    const where: Record<string, unknown> = { userId: req.userId };
+    const where: Prisma.SolvedQuestionWhereInput = { userId: req.userId };
     if (topic) where.topic = topic;
     if (difficulty) where.difficulty = difficulty;
-    if (search) {
-      where.title = { contains: search, mode: 'insensitive' };
-    }
+    if (search) where.title = { contains: search, mode: 'insensitive' };
 
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
@@ -53,20 +51,18 @@ router.post('/questions', authenticate, async (req: AuthRequest, res: Response):
     const question = await prisma.solvedQuestion.create({
       data: {
         userId: req.userId!,
-        title,
-        difficulty,
-        topic,
-        leetcodeId: leetcodeId ? parseInt(leetcodeId) : undefined,
-        url,
-        notes,
-        timeTaken: timeTaken ? parseInt(timeTaken) : undefined,
-        solvedAt: solvedAt ? new Date(solvedAt) : new Date(),
+        title: String(title),
+        difficulty: String(difficulty),
+        topic: String(topic),
+        leetcodeId: leetcodeId ? parseInt(String(leetcodeId)) : undefined,
+        url: url ? String(url) : undefined,
+        notes: notes ? String(notes) : undefined,
+        timeTaken: timeTaken ? parseInt(String(timeTaken)) : undefined,
+        solvedAt: solvedAt ? new Date(String(solvedAt)) : new Date(),
       },
     });
 
-    // Update streak
     await updateStreak(req.userId!);
-
     res.status(201).json(question);
   } catch (err) {
     console.error(err);
@@ -91,7 +87,14 @@ router.put('/questions/:id', authenticate, async (req: AuthRequest, res: Respons
 
     const updated = await prisma.solvedQuestion.update({
       where: { id },
-      data: { title, difficulty, topic, url, notes, timeTaken },
+      data: {
+        title: title ? String(title) : undefined,
+        difficulty: difficulty ? String(difficulty) : undefined,
+        topic: topic ? String(topic) : undefined,
+        url: url ? String(url) : undefined,
+        notes: notes ? String(notes) : undefined,
+        timeTaken: timeTaken ? parseInt(String(timeTaken)) : undefined,
+      },
     });
 
     res.json(updated);
@@ -149,7 +152,6 @@ router.get('/stats', authenticate, async (req: AuthRequest, res: Response): Prom
     ]);
 
     const streak = await getCurrentStreak(req.userId!);
-
     res.json({ total, byDifficulty, byTopic, recentActivity, streak });
   } catch (err) {
     console.error(err);
@@ -164,14 +166,10 @@ router.get('/heatmap', authenticate, async (req: AuthRequest, res: Response): Pr
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     const questions = await prisma.solvedQuestion.findMany({
-      where: {
-        userId: req.userId,
-        solvedAt: { gte: oneYearAgo },
-      },
+      where: { userId: req.userId, solvedAt: { gte: oneYearAgo } },
       select: { solvedAt: true },
     });
 
-    // Group by date
     const heatmapData: Record<string, number> = {};
     for (const q of questions) {
       const date = q.solvedAt.toISOString().split('T')[0];
@@ -214,7 +212,6 @@ async function getCurrentStreak(userId: string): Promise<number> {
     expected.setDate(expected.getDate() - i);
     const streakDate = new Date(streaks[i].date);
     streakDate.setHours(0, 0, 0, 0);
-
     if (expected.getTime() === streakDate.getTime()) {
       streak++;
     } else {
