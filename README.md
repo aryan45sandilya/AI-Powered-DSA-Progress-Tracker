@@ -1,4 +1,4 @@
-# 🧠 DSA Tracker — AI-Powered LeetCode Progress Platform
+# 🧠 AI-Powered DSA Progress Tracker
 
 <div align="center">
 
@@ -9,9 +9,11 @@
 ![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Google-Gemini_AI-4285F4?style=for-the-badge&logo=google&logoColor=white)
 
+### 🚀 [Live Demo → ai-powered-dsa-progress-tracker.vercel.app](https://ai-powered-dsa-progress-tracker.vercel.app/)
+
 **The smartest way for students to track LeetCode progress, identify weak topics with AI, and land their dream job.**
 
-[Live Demo](#) · [Report Bug](#) · [Request Feature](#)
+[🌐 Live Demo](https://ai-powered-dsa-progress-tracker.vercel.app/) · [🐛 Report Bug](https://github.com/aryan45sandilya/AI-Powered-DSA-Progress-Tracker/issues) · [✨ Request Feature](https://github.com/aryan45sandilya/AI-Powered-DSA-Progress-Tracker/issues)
 
 </div>
 
@@ -33,9 +35,13 @@
 
 ---
 
-## 🖥️ Screenshots
+## 🌐 Live Demo
 
-> Dashboard · Tracker · AI Analyzer · GitHub Analyzer · Heatmap
+> **[https://ai-powered-dsa-progress-tracker.vercel.app/](https://ai-powered-dsa-progress-tracker.vercel.app/)**
+
+- Frontend hosted on **Vercel**
+- Backend hosted on **Render**
+- Database on **Neon** (PostgreSQL)
 
 ---
 
@@ -54,7 +60,6 @@
 - **Prisma ORM** + **PostgreSQL** (Neon)
 - **JWT** — Authentication
 - **bcryptjs** — Password hashing
-- **Axios** — HTTP client
 
 ### AI & APIs
 - **Google Gemini 1.5 Flash** — Weak topic analysis, recommendations, resume generation
@@ -72,8 +77,8 @@
 
 ### 1. Clone the repo
 ```bash
-git clone https://github.com/YOUR_USERNAME/dsa-tracker.git
-cd dsa-tracker
+git clone https://github.com/aryan45sandilya/AI-Powered-DSA-Progress-Tracker.git
+cd AI-Powered-DSA-Progress-Tracker
 ```
 
 ### 2. Setup Backend
@@ -88,7 +93,7 @@ Fill in `backend/.env`:
 DATABASE_URL=postgresql://user:password@host/dbname?sslmode=require
 JWT_SECRET=your_random_secret_key
 GEMINI_API_KEY=your_gemini_api_key
-GITHUB_TOKEN=your_github_token   # optional but recommended
+GITHUB_TOKEN=your_github_token
 PORT=5000
 ```
 
@@ -125,7 +130,7 @@ http://localhost:5173
 ## 📁 Project Structure
 
 ```
-dsa-tracker/
+AI-Powered-DSA-Progress-Tracker/
 ├── backend/
 │   ├── prisma/
 │   │   └── schema.prisma          # Database models
@@ -142,7 +147,6 @@ dsa-tracker/
 │   │   ├── services/
 │   │   │   └── gemini.ts          # Gemini AI service
 │   │   └── index.ts               # Express app entry
-│   ├── .env.example
 │   └── package.json
 │
 ├── frontend/
@@ -159,7 +163,7 @@ dsa-tracker/
 │   │   ├── context/
 │   │   │   └── AuthContext.tsx    # Auth state management
 │   │   ├── data/
-│   │   │   └── dsaSheets.ts       # Hardcoded DSA sheet data
+│   │   │   └── dsaSheets.ts       # DSA sheet data
 │   │   ├── pages/
 │   │   │   ├── Landing.tsx        # Landing page
 │   │   │   ├── Login.tsx
@@ -172,10 +176,7 @@ dsa-tracker/
 │   │   │   ├── GitHub.tsx         # GitHub analyzer
 │   │   │   ├── Resume.tsx         # Resume generator
 │   │   │   └── Heatmap.tsx        # Activity heatmap
-│   │   ├── types/
-│   │   │   └── index.ts           # TypeScript interfaces
 │   │   └── App.tsx                # Router setup
-│   ├── .env.example
 │   └── package.json
 │
 └── README.md
@@ -209,11 +210,11 @@ dsa-tracker/
 
 ---
 
-## 🤖 AI Features (Gemini)
+## 🤖 AI Features (Gemini 1.5 Flash)
 
-1. **Weak Topic Analyzer** — Analyzes your solved problems and identifies topics needing improvement
-2. **Smart Recommendations** — Suggests 6 problems based on weak topics and skill level
-3. **Resume Generator** — Creates professional DSA bullet points for your resume
+1. **Weak Topic Analyzer** — Analyzes solved problem history, identifies weak topics, gives actionable suggestions
+2. **Smart Recommendations** — Suggests 6 problems tailored to weak topics and skill level
+3. **Resume Generator** — Creates professional DSA bullet points based on actual stats
 
 ---
 
@@ -227,14 +228,24 @@ dsa-tracker/
 
 ---
 
+## 🙌 Contributing
+
+Pull requests are welcome! For major changes, please open an issue first.
+
+---
+
 ## 📄 License
 
-MIT License — feel free to use this project for learning and portfolio purposes.
+MIT License — free to use for learning and portfolio purposes.
 
 ---
 
 <div align="center">
   Built with ❤️ for students cracking tech interviews
-  <br/>
-  <strong>Star ⭐ this repo if it helped you!</strong>
+  <br/><br/>
+  <a href="https://ai-powered-dsa-progress-tracker.vercel.app/">
+    <img src="https://img.shields.io/badge/🌐_Live_Demo-Visit_Now-22c55e?style=for-the-badge" alt="Live Demo" />
+  </a>
+  <br/><br/>
+  <strong>⭐ Star this repo if it helped you!</strong>
 </div>
